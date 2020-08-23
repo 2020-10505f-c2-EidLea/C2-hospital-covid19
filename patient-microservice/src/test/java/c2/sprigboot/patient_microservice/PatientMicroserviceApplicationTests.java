@@ -1,10 +1,10 @@
-package c2.springboot.patient;
+package c2.sprigboot.patient_microservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PatientApplicationTests {
+class PatientMicroserviceApplicationTests {
 
 	@Test
 	void contextLoads() {
