@@ -20,6 +20,6 @@ public class RoomEntity
     private int idType;
     private int idClass;
     private int idFloor;
-    private int isAvailable;
+    private boolean available;
     private int nbrReservedBeds;
 }
