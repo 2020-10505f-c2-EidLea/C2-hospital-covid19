@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
+// All unit details from all module tables (TBL_ROOM, TBL_TYPES, TBL_FLOOR, TBL_CLASSES)
 public class RoomCO {
     private int id;
     private String nbr;

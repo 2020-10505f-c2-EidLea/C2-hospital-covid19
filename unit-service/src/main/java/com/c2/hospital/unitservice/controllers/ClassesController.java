@@ -24,11 +24,13 @@ public class ClassesController {
     @Autowired
     private ClassesRepository classesRepository;
 
+    // Get list of all unit classes
     @GetMapping("/")
     public List<ClassesEntity> getAllClassesEntitys() {
         return classesRepository.findAll();
     }
 
+    // Get unit class by ID
     @GetMapping("/{id}")
     public ResponseEntity<ClassesEntity> getClassesEntityById(@PathVariable(value = "id") int classesEntityId) throws ResourceNotFoundException {
         ClassesEntity ClassesEntity = classesRepository.findById(classesEntityId)
@@ -36,11 +38,13 @@ public class ClassesController {
         return ResponseEntity.ok().body(ClassesEntity);
     }
 
+    // Add new unit class
     @PostMapping("/")
     public ClassesEntity createClassesEntity(@Valid @RequestBody ClassesEntity ClassesEntity) {
         return classesRepository.save(ClassesEntity);
     }
 
+    // Update name or reserved beds quantity by unit class ID
     @PutMapping("/{id}")
     public ResponseEntity<ClassesEntity> updateClassesEntity(@PathVariable(value = "id") int classesEntityId,  @Valid @RequestBody ClassesEntity classesEntityDetails) throws ResourceNotFoundException {
         ClassesEntity classesEntity = classesRepository.findById(classesEntityId)
@@ -52,6 +56,7 @@ public class ClassesController {
         return ResponseEntity.ok(updatedClassesEntity);
     }
 
+    // Delete unit class by ID
     @DeleteMapping("/{id}")
     public Map<String, Boolean> deleteClassesEntity(@PathVariable(value = "id") int classesEntityId)
             throws ResourceNotFoundException {

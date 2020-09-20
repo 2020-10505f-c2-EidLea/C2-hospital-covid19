@@ -17,5 +17,5 @@ public class ClassesEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    private int nbrOfBed;
+    private int nbrOfBed; // class A = 1 bed, class B = 2 beds, ...
 }

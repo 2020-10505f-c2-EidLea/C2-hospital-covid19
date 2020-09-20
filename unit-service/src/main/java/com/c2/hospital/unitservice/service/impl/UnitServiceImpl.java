@@ -57,7 +57,7 @@ public class UnitServiceImpl implements UnitService {
         FloorEntity floorEntity = null;
         ClassesEntity classesEntity = null;
         TypeEntity typeEntity = null;
-
+        // get unit floor details
         Optional opt = floorRepository.findById(roomEntity.getIdFloor());
         if(opt.isPresent())
         {
@@ -66,6 +66,7 @@ public class UnitServiceImpl implements UnitService {
             roomCO.setFloor_nbr(floorEntity.getNbr());
             roomCO.setFloor_specialization(floorEntity.getSpecialization());
         }
+        // get unit class details
         opt = classesRepository.findById(roomEntity.getIdClass());
         if(opt.isPresent())
         {
@@ -73,6 +74,7 @@ public class UnitServiceImpl implements UnitService {
             roomCO.setClasses_name(classesEntity.getName());
             roomCO.setClasses_nbrOfBed(classesEntity.getNbrOfBed());
         }
+        // get unit type details
         opt = typeRepository.findById(roomEntity.getIdType());
         if(opt.isPresent())
         {
@@ -91,16 +93,17 @@ public class UnitServiceImpl implements UnitService {
 
         roomEntity.setAvailable(true);
         int nbrOfReservedBed = roomEntity.getNbrReservedBeds();
+        // if new admission --> action reserve
         if(reserve)
         {
             ClassesEntity classesEntity = classesRepository.findById(roomEntityId)
                     .orElseThrow(() -> new ResourceNotFoundException("Classes not found for this Room id :: " + roomEntityId));
 
-            if(nbrOfReservedBed < classesEntity.getNbrOfBed())
-            {
-                nbrOfReservedBed++;
+            if(nbrOfReservedBed < classesEntity.getNbrOfBed())  
+            { // if still have free bed
+                nbrOfReservedBed++; // reserve new bed
                 if(nbrOfReservedBed == classesEntity.getNbrOfBed())
-                {
+                { // if no free beds --> room is unavailable
                     roomEntity.setAvailable(false);
                 }
             }
@@ -110,10 +113,10 @@ public class UnitServiceImpl implements UnitService {
             }
         }
         else
-        {
+        { // if end admission --> action reset
             if(nbrOfReservedBed > 0)
             {
-                nbrOfReservedBed--;
+                nbrOfReservedBed--; // free reserved bed
             }
             else
             {

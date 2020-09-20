@@ -23,11 +23,13 @@ public class TypesController {
     @Autowired
     private TypeRepository typeRepository;
 
+    // Get list of all unit types
     @GetMapping("/")
     public List<TypeEntity> getAllTypeEntitys() {
         return typeRepository.findAll();
     }
 
+    // Get unit type by ID
     @GetMapping("/{id}")
     public ResponseEntity<TypeEntity> getTypeEntityById(@PathVariable(value = "id") int typesEntityId) throws ResourceNotFoundException {
         TypeEntity TypeEntity = typeRepository.findById(typesEntityId)
@@ -35,11 +37,13 @@ public class TypesController {
         return ResponseEntity.ok().body(TypeEntity);
     }
 
+    // Add new unit type
     @PostMapping("/")
     public TypeEntity createTypeEntity(@Valid @RequestBody TypeEntity TypeEntity) {
         return typeRepository.save(TypeEntity);
     }
 
+    // Update unit name or description by unit type ID
     @PutMapping("/{id}")
     public ResponseEntity<TypeEntity> updateTypeEntity(@PathVariable(value = "id") int typesEntityId,  @Valid @RequestBody TypeEntity typesEntityDetails) throws ResourceNotFoundException {
         TypeEntity typesEntity = typeRepository.findById(typesEntityId)
@@ -51,6 +55,7 @@ public class TypesController {
         return ResponseEntity.ok(updatedTypeEntity);
     }
 
+    // Delete unit type
     @DeleteMapping("/{id}")
     public Map<String, Boolean> deleteTypeEntity(@PathVariable(value = "id") int typesEntityId)
             throws ResourceNotFoundException {

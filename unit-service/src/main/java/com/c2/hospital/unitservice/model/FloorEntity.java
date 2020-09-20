@@ -16,7 +16,7 @@ public class FloorEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String nbr;
-    private String bloc;
-    private String specialization;
+    private String nbr; // code
+    private String bloc; // parent section/building
+    private String specialization; // medical specialization of each floor
 }

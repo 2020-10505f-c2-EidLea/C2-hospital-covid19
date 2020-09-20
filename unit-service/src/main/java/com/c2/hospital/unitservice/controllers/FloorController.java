@@ -23,11 +23,13 @@ public class FloorController {
     @Autowired
     private FloorRepository floorRepository;
 
+    // Get List of all floors in covid 19 bloc
     @GetMapping("/")
     public List<FloorEntity> getAllFloorEntitys() {
         return floorRepository.findAll();
     }
 
+    // Get floor by ID
     @GetMapping("/{id}")
     public ResponseEntity<FloorEntity> getFloorEntityById(@PathVariable(value = "id") int floorEntityId) throws ResourceNotFoundException {
         FloorEntity FloorEntity = floorRepository.findById(floorEntityId)
@@ -35,11 +37,13 @@ public class FloorController {
         return ResponseEntity.ok().body(FloorEntity);
     }
 
+    // Add new floor
     @PostMapping("/")
     public FloorEntity createFloorEntity(@Valid @RequestBody FloorEntity FloorEntity) {
         return floorRepository.save(FloorEntity);
     }
 
+    // Update floor code, parent bloc, medical specialization of the floor by ID
     @PutMapping("/{id}")
     public ResponseEntity<FloorEntity> updateFloorEntity(@PathVariable(value = "id") int floorEntityId,  @Valid @RequestBody FloorEntity floorEntityDetails) throws ResourceNotFoundException {
         FloorEntity floorEntity = floorRepository.findById(floorEntityId)
@@ -52,6 +56,7 @@ public class FloorController {
         return ResponseEntity.ok(updatedFloorEntity);
     }
 
+    // Delete floor by ID
     @DeleteMapping("/{id}")
     public Map<String, Boolean> deleteFloorEntity(@PathVariable(value = "id") int floorEntityId)
             throws ResourceNotFoundException {
