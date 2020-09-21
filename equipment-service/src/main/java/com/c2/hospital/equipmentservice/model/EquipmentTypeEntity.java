@@ -17,5 +17,6 @@ public class EquipmentTypeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+    private int serviceId;
     private String description;
 }
