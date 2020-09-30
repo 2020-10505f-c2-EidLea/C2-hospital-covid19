@@ -63,8 +63,6 @@
         </dependency>
 
         <dependency>
-<<<<<<< HEAD
-=======
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
@@ -76,7 +74,6 @@
         </dependency>
 
         <dependency>
->>>>>>> 843bce3a8594a0b515ebea54194158354a1d5ce2
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>

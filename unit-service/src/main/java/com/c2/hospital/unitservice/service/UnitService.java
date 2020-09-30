@@ -8,15 +8,13 @@ import java.util.List;
 
 public interface UnitService {
 
-    // List of all available units (still have free beds)
     List<RoomCO> findAvailableRoom();
 
-    // List of fully reserved rooms
     List<RoomCO> findNonAvailableRoom();
 
-    // Get unit details
     RoomCO findRoomDetails(RoomEntity roomEntity);
 
-    // reserve/reset room depending on admission entry/end
     RoomEntity updateRoomReservation(int roomEntityId, boolean reserve) throws ResourceNotFoundException;
+
+    List<RoomCO> findRoomInfo(int typeId, int filterCriteria);
 }
