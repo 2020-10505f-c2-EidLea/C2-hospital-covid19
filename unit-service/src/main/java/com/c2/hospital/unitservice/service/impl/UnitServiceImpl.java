@@ -94,7 +94,7 @@ public class UnitServiceImpl implements UnitService {
         int nbrOfReservedBed = roomEntity.getNbrReservedBeds();
         if(reserve)
         {
-            ClassesEntity classesEntity = classesRepository.findById(roomEntityId)
+            ClassesEntity classesEntity = classesRepository.findById(roomEntity.getIdClass())
                     .orElseThrow(() -> new ResourceNotFoundException("Classes not found for this Room id :: " + roomEntityId));
 
             if(nbrOfReservedBed < classesEntity.getNbrOfBed())

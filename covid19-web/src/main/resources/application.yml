@@ -1,0 +1,14 @@
+# Server config
+server:
+  port: ${PORT:8060}
+
+# Spring config
+spring:
+  application:
+    name: covid19-web
+
+
+#https://covid19.who.int/page-data/table/page-data.json
+API_GATEWAY_LINK: http://localhost:8888
+VIRUS_DATA_URL: https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv
+DEATH_DATA_URL: https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv
