@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<head th:include="fragments/head :: head" th:remove="tag"/>
+		<link href="/css/bootstrap-datepicker.min.css" rel="stylesheet" media="all" th:href="@{/css/bootstrap-datepicker.min.css}">
+		<link href="/css/bootstrap-datepicker.standalone.min.css" rel="stylesheet" media="all" th:href="@{/css/bootstrap-datepicker.standalone.min.css}">
+	</head>
+	<body>
+		<section th:include="fragments/header::header" th:remove="tag"></section>
+		<div class="container">
+				<div class="col-md-12">
+					<div class="box">
+						<div class="col-md-12" th:if="${status != null}">
+							<p class="alert " th:classappend="${status=='error' ? 'alert-danger' : 'alert-success'}" th:text="${message}"></p>
+						</div>
+						<form class="form-horizontal" action="/patients/update" name="" method="post">
+							<input name="id" type="hidden" th:value="${patient.id}"/>
+							<div class="form-group row">
+								<label class="control-label col-md-3">First Name</label>
+								<div class="col-md-5">
+									<input name="firstName" th:value="${patient.firstName}" type="text" class="form-contol input" required="required"/>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="control-label col-md-3">Middle Name</label>
+								<div class="col-md-5">
+									<input name="middleName" th:value="${patient.middleName}" type="text" class="form-contol input" required="required"/>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="control-label col-md-3">Last Name</label>
+								<div class="col-md-5">
+									<input name="lastName" th:value="${patient.lastName}" type="text" class="form-contol input" required="required"/>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="control-label col-md-3" for="birthdate">Date of birth</label>
+								<div class="input-group date col-md-5">
+									<div class="input-group-append">
+										<input name="birthdate" th:value="${#dates.format(patient.birthdate, 'dd/MM/yyyy')}" type="text" class="form-control" id="birthdate" autocomplete="off"/>
+										<span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="control-label col-md-3">Gender</label>
+								<div class="col-md-5">
+									<input name="gender" type="radio" value="male" th:checked="${patient.gender} == 'M'"/> Male
+									<input name="gender" type="radio" value="female" th:checked="${patient.gender} == 'female'"/> Female
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="control-label col-md-3">Address</label>
+								<div class="col-md-5">
+									<input name="address" th:value="${patient.address}" type="text" class="form-contol input" required="required"/>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="control-label col-md-3">Phone</label>
+								<div class="col-md-5">
+									<input name="phone" th:value="${patient.phone}" type="text" class="form-contol input" required="required"/>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="control-label col-md-3">Email</label>
+								<div class="col-md-5">
+									<input name="email" th:value="${patient.email}" type="text" class="form-contol input" required="required"/>
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								<label class="control-label col-md-3"></label>
+								<div class="col-md-5">
+									<input type="submit" value="UPDATE" class="btn btn-primary" />
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+		</div>
+	</body>
+	<script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+	<script type="text/javascript" src="/js/bootstrap-datepicker.min.js" th:src="@{/js/bootstrap-datepicker.min.js}"></script>
+
+	<script>
+		$(document).ready(function (){
+			covid19_datepickerFunc();
+		});
+	</script>
+</html>

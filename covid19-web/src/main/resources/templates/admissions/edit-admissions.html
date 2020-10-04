@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<head th:include="fragments/head :: head" th:remove="tag"/>
+		<link href="/css/bootstrap-datepicker.min.css" rel="stylesheet" media="all" th:href="@{/css/bootstrap-datepicker.min.css}">
+		<link href="/css/bootstrap-datepicker.standalone.min.css" rel="stylesheet" media="all" th:href="@{/css/bootstrap-datepicker.standalone.min.css}">
+	</head>
+	<body>
+		<section th:include="fragments/header::header" th:remove="tag"></section>
+		<div class="container">
+				<div class="col-md-12">
+					<div class="box">
+						<div class="col-md-12" th:if="${status != null}">
+							<p class="alert " th:classappend="${status=='error' ? 'alert-danger' : 'alert-success'}" th:text="${message}"></p>
+						</div>
+						<div class="col-md-12">
+							<p id="alertDiv" class="alert" style="display: none;"></p>
+						</div>
+						<form class="form-horizontal" action="/admissions/update" id="admissionsFormId" name="admissionsForm" method="post">
+							<input id="admissionId" name="id" type="hidden" th:value="${admission.id}"/>
+							<div class="form-group row">
+								<label class="control-label col-md-3">Patient </label>
+								<div class="col-md-3">
+									<select id="profileId" name="profileId" class="form-contol select" required="required">
+										<option value="" th:selected="${admission.profileId == 0 ? 'selected':null }">Select</option>
+										<option th:each="patient : ${patientsList}" th:value="${patient.id}" th:selected="${admission.profileId == patient.id ? 'selected':null }">
+											<span th:text="${patient.firstName} + ' ' + ${patient.middleName} + ' ' + ${patient.lastName}"></span>
+										</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row" id="admissionDivId" style="display: none">
+								<label class="control-label col-md-3">Visit Purpose</label>
+								<div class="col-md-3">
+									<input id="admissionDescId" name="description" th:value="${admission.description}" type="text" class="form-contol input" required="required"/>
+									<label id="admissionDescVal" class="control-label"></label>
+								</div>
+								<label id="lastCheckIn" class="control-label col-md-4"></label>
+							</div>
+							<div class="form-group row">
+								<label class="control-label col-md-3">Service </label>
+								<div class="col-md-5">
+									<select id="serviceId" name="serviceId" class="form-contol select" required="required">
+										<option value="" th:selected="${admission.serviceId == 0 ? 'selected':null }">Select</option>
+										<option th:each="service : ${servicesList}" th:value="${service.id}" th:selected="${admission.serviceId == service.id ? 'selected':null }">
+											<span th:text="${service.description}"></span>
+										</option>
+									</select>
+								</div>
+							</div>
+							<div id="serviceDet" class="form-group row" style="display: none;">
+								<label class="control-label col-md-3"> </label>
+								<div class="box col-md-5">
+									<table class="table table-bordered table-striped table-hover">
+									<thead>
+									<tr>
+										<th>Provider</th>
+										<th>Equipment Type</th>
+										<th>Quatity</th>
+									</tr>
+									</thead>
+									<tbody id="tbodyId">
+									</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="form-group row roomclass">
+								<label class="control-label col-md-3">Room Class  </label>
+								<div class="col-md-5">
+									<th:block th:each="roomClass : ${roomClassesList}" >
+										<input name="roomClassId" type="radio" th:value="${roomClass.id}" th:checked="${admission.roomClassId == roomClass.id}"/>
+										<label th:text="${roomClass.name}"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									</th:block>
+								</div>
+							</div>
+							<div class="form-group row roomclass">
+								<label class="control-label col-md-3">Floor </label>
+								<div class="col-md-5">
+									<select id="floorId" name="floorId" class="form-contol select">
+										<option value="" th:selected="${admission.floorId == 0 ? 'selected':null }">Select</option>
+										<option th:each="floor : ${floorList}" th:value="${floor.id}" th:selected="${admission.floorId == floor.id ? 'selected':null }">
+											<span th:text="${floor.bloc} + ' - ' + ${floor.specialization}"></span>
+										</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row roomclass">
+								<label class="control-label col-md-3">Room Type </label>
+								<div class="col-md-5">
+									<select id="roomTypeId" name="roomTypeId" class="form-contol select">
+										<option value="" th:selected="${admission.roomTypeId == 0 ? 'selected':null }">Select</option>
+										<option th:each="roomType : ${roomTypeList}" th:value="${roomType.id}" th:selected="${(admission.roomTypeId != 0 && admission.roomTypeId == roomType.id) ? 'selected':null }">
+											<span th:text="${roomType.name}"></span>
+										</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row roomclass">
+								<label class="control-label col-md-3">Room Number </label>
+								<div class="col-md-3">
+									<select id="roomId" name="roomId" class="form-contol select">
+										<option value="" th:selected="${admission.roomId == 0 ? 'selected':null }">Select</option>
+									</select>
+								</div>
+								<label id="roomSpecId" class="control-label col-md-4"></label>
+							</div>
+							<div class="form-group row">
+								<label class="control-label col-md-3" for="serviceDate">Admission Date</label>
+								<div class="input-group date col-md-3">
+									<div class="input-group-append">
+										<input name="serviceDate" th:value="${#dates.format(admission.serviceDate, 'dd/MM/yyyy')}" type="text" class="form-control" id="serviceDate" autocomplete="off"/>
+										<span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group row" for="serviceDate">
+								<label class="control-label col-md-3">Result</label>
+								<div class="col-md-5">
+									<textarea class="form-control" required="required" style="margin-top: 10px;"  placeholder="service Result"  name="serviceResult" th:inline="text"></textarea>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="control-label col-md-3"></label>
+								<div class="col-md-1">
+									<input type="submit" value="Submit" class="btn btn-primary" />
+								</div>
+								<div class="col-md-1">
+									<input type="reset" value="Reset" class="btn btn-danger" />
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+		</div>
+		<div class="row">
+			<footer th:include="fragments/footer::footer" th:remove="tag"/></footer>
+		</div>
+	</body>
+	<script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+	<script type="text/javascript" src="/js/bootstrap-datepicker.min.js" th:src="@{/js/bootstrap-datepicker.min.js}"></script>
+
+	<script>
+		$(document).ready(function (){
+			covid19_datepickerFunc();
+			$('#profileId').change(admissions_profileValidation);
+			$('#serviceId').change(admissions_serviceValidation);
+			$('#floorId').change(admissions_roomValidation);
+			$('#roomTypeId').change(admissions_roomValidation);
+			$('#roomId').change(admissions_roomIdValidation);
+			$("input[type='radio']").click(admissions_roomValidation);
+		});
+
+		function admissions_profileValidation()
+		{
+			$("#admissionDivId").hide();
+			var profileId = $('#profileId').val();
+			document.getElementById("admissionsFormId").reset();
+			$("#admissionId").val("");
+			$("#lastCheckIn").text("");
+			$("#serviceDet").hide();
+			$("#admissionDivId").hide();
+			$("#tbodyId").html("");
+			if(profileId == "")
+			{
+				document.getElementById("admissionsFormId").reset();
+				return;
+			}
+			var url = "/covid19/profile/validation/"+profileId;
+			$.ajax({
+				url: url,
+				type: "GET",
+				contentType: "application/json",
+				dataType: 'json',
+				cache: false,
+				timeout: 600000,
+				success: function (data) {
+					$('#profileId').val(profileId);
+					$("#admissionDivId").show();
+					if(data.admissionId != undefined && data.admissionId != "")
+					{
+						$("#admissionId").val(data.admissionId);
+						var lastAdm = (data.checkIn.split("T")[0]).split("-");
+						$("#lastCheckIn").text("Visit Date : " + lastAdm[2] +"/"+ lastAdm[1] + "/"+ lastAdm[0]);
+						$("#admissionDescVal").text(data["description"]);
+						$("#admissionDescId").val(data["description"]);
+
+						$("#admissionDescId").hide();
+						$("#admissionDescVal").show();
+						console.log("SUCCESS : ", data);
+					}
+					else
+					{
+						$("#admissionDescId").show();
+						$("#admissionDescVal").hide();
+					}
+
+				},
+				error: function (e) {
+					$('#serviceId').val("");
+					if(null != e && null != e.responseJSON && null != e.responseJSON.message)
+					{
+						$("#alertDiv").text(e.responseJSON.message);
+						$("#alertDiv").addClass("alert-danger");
+						$("#alertDiv").show();
+						$("#alertDiv").fadeOut( 5000 );
+					}
+
+				}
+			});
+		}
+		function admissions_serviceValidation()
+		{
+			$("#serviceDet").hide();
+			$("#tbodyId").html("");
+			if($('#serviceId').val() == "")
+			{
+				return;
+			}
+			var url = "/covid19/service/validation/"+$('#serviceId').val();
+			$.ajax({
+				url: url,
+				type: "GET",
+				contentType: "application/json",
+				dataType: 'json',
+				cache: false,
+				timeout: 600000,
+				success: function (data) {
+					if(data["equipmentList"].length > 0)
+					{
+						$.each(data["equipmentList"], function( index, value ) {
+							$("#tbodyId").append("<tr><td>"+value.providerName+"</td><td>"+value.typeName+"</td><td>"+value.disponibility+"</td></tr>");
+						});
+						$("#serviceDet").show();
+						if($('#serviceId').val() == "1"){
+							$(".roomclass").hide();
+						}else{
+							$(".roomclass").show();
+							$("#roomId").val("");
+						};
+					}
+					console.log("SUCCESS : ", data);
+
+				},
+				error: function (e) {
+					$('#serviceId').val("");
+					if(null != e && null != e.responseJSON && null != e.responseJSON.message)
+					{
+						$("#alertDiv").text(e.responseJSON.message);
+						$("#alertDiv").addClass("alert-danger");
+						$("#alertDiv").show();
+						$("#alertDiv").fadeOut( 5000 );
+					}
+
+				}
+			});
+		}
+
+		function admissions_roomValidation()
+		{
+			$("#roomId").html("<option value=\"\">Select</option>");
+			var roomClassId = $("input[name='roomClassId']:checked").val();
+			var floorId = 0;
+			if($('#floorId').val() != "")
+			{
+				floorId = $("#floorId").val() ;
+			}
+			var roomTypeId = 0;
+			if($('#roomTypeId').val() != "")
+			{
+				roomTypeId = $("#roomTypeId").val() ;
+			}
+			var url = "/covid19/room/validation/"+floorId+"/"+roomTypeId+"/"+roomClassId;
+			$.ajax({
+				url: url,
+				type: "GET",
+				contentType: "application/json",
+				dataType: 'json',
+				cache: false,
+				timeout: 600000,
+				success: function (data) {
+					$.each(data, function( index, value ) {
+						// $("#roomId").append("<option id=\""+value.id+"\">Room No: "+ value.nbr+"</option>");
+						$("#roomId").append(new Option("Room No: "+value.nbr, value.id));
+					});
+				},
+				error: function (e) {
+					$('#serviceId').val("");
+					if(null != e && null != e.responseJSON && null != e.responseJSON.message)
+					{
+						$("#alertDiv").text(e.responseJSON.message);
+						$("#alertDiv").addClass("alert-danger");
+						$("#alertDiv").show();
+						$("#alertDiv").fadeOut( 5000 );
+					}
+
+				}
+			});
+		}
+
+		function admissions_roomIdValidation()
+		{
+			$("#roomSpecId").text("");
+			var roomId = $("#roomId").val();
+			if(roomId == null)
+			{
+				return;
+			}
+			var url = "/covid19/roomId/validation/"+roomId;
+			$.ajax({
+				url: url,
+				type: "GET",
+				contentType: "application/json",
+				dataType: 'json',
+				cache: false,
+				timeout: 600000,
+				success: function (data) {
+					$("#roomSpecId").text("Reserved/Available : " + data.nbrReservedBeds +"/"+ data.classes_nbrOfBed + " Beds");
+					$('#floorId').val(data["idFloor"]);
+					$('#roomTypeId').val(data["idType"]);
+				},
+				error: function (e) {
+					$('#serviceId').val("");
+					if(null != e && null != e.responseJSON && null != e.responseJSON.message)
+					{
+						$("#alertDiv").text(e.responseJSON.message);
+						$("#alertDiv").addClass("alert-danger");
+						$("#alertDiv").show();
+						$("#alertDiv").fadeOut( 5000 );
+					}
+
+				}
+			});
+		}
+	</script>
+</html>

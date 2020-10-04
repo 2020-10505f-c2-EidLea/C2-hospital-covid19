@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<head th:include="fragments/head :: head" th:remove="tag"/>
+		<style>
+			.modal {
+				display: none; /* Hidden by default */
+				position: fixed; /* Stay in place */
+				z-index: 1; /* Sit on top */
+				padding-top: 300px; /* Location of the box */
+				left: 0;
+				top: 0;
+				width: 100%; /* Full width */
+				height: 100%; /* Full height */
+				overflow: auto; /* Enable scroll if needed */
+				background-color: rgb(0,0,0); /* Fallback color */
+				background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+			}
+
+			/* Modal Content */
+			.modal-content {
+				background-color: #fefefe;
+				margin: auto;
+				display: inline-list-item;
+				padding: 10px;
+				border: 1px solid #888;
+				width: 30%;
+			}
+
+			/* The Close Button */
+			.close {
+				color: #aaaaaa;
+				float: right;
+				font-size: 28px;
+				font-weight: bold;
+			}
+
+			.close:hover,
+			.close:focus {
+				color: #000;
+				text-decoration: none;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<section th:include="fragments/header::header" th:remove="tag"></section>
+		<div class="container">
+			<div class="col-md-12" th:if="${status != null}">
+				<p class="alert " th:classappend="${status=='error' ? 'alert-danger' : 'alert-success'}" th:text="${message}"></p>
+			</div>
+			<div class="col-md-12">
+				<p id="alertDiv" class="alert" style="display: none;"></p>
+			</div>
+
+			<div class="col-md-12">
+				<strong>Patient : </strong>
+				<label th:text="${patient.firstName} + ' ' + ${patient.middleName} + ' ' + ${patient.lastName} "></label>
+				<strong>               - phone : </strong>
+				<label th:text="${patient.phone}"></label>
+			</div>
+			<div class="col-md-12">
+				<div class="box">
+					<table class="table table-bordered table-striped table-hover">
+						<thead>
+							<tr>
+								<th>description</th>
+								<th>Days</th>
+								<th>Check-In/Check-Out</th>
+								<th>result</th>
+							</tr>
+						</thead>
+						<tbody th:if="${patient.admissionList != null}">
+							<tr th:each="patientAdm : ${patient.admissionList}">
+								<td><u><a href="#" th:text="${patientAdm.description}"  th:onclick="'history_showAdmissionService(\'' + ${patientAdm.admissionId} + '\');'"></a></u></td>
+								<td th:text="${patientAdm.nbrOfDays} + ' Days(s)'"></td>
+								<td>
+									<span th:text="${#dates.format(patientAdm.checkIn, 'dd/MM/yyyy')} + ' - '"></span>
+									<span th:if="${patientAdm.checkOut != null}" th:text="${#dates.format(patientAdm.checkOut, 'dd/MM/yyyy')}"/>
+									<a id="${patientAdm.admissionId}" href="#" th:onclick="'history_endPatientAdmission(\'' + ${patientAdm.id} + '\',\'' + ${patientAdm.admissionId} + '\');'" th:unless="${patientAdm.checkOut != null}" th:text="'End Visit'"/>
+								</td>
+								<td th:text="${patientAdm.result}"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div id="myModal" class="modal">
+				<div class="modal-content">
+					<span class="close" id="closeId">&times;</span>
+					<div class="col-md-12">
+						<strong>Patient : </strong>
+						<label th:text="${patient.firstName} + ' ' + ${patient.middleName} + ' ' + ${patient.lastName} "></label>
+						<strong>               - phone : </strong>
+						<label th:text="${patient.phone}"></label>
+					</div>
+					<div id="roomInfoId" class="col-md-12"></div><br/>
+					<div class="box">
+						<table class="table table-bordered table-striped table-hover">
+							<thead>
+							<tr>
+								<th>Date</th>
+								<th>Service</th>
+								<th>result</th>
+							</tr>
+							</thead>
+							<tbody id="tbodyHistoryId">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div id="checkoutModal" class="modal">
+				<div class="modal-content">
+					<span class="close" id="checkoutCloseId">&times;</span>
+					<div class="col-md-12">
+						<input id="checkoutAdmId" type="hidden"/>
+						<input id="historyId" type="hidden"/>
+						<div class="form-group row">
+							<label class="control-label col-md-3">Visit Result </label>
+							<div class="col-md-9">
+								<textarea class="form-control" placeholder="service Result" th:inline="text" id="checkoutResultId"></textarea>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label class="control-label col-md-3"></label>
+							<div class="col-md-2">
+								<input type="button" id="proceedId" value="proceed" class="btn btn-primary" />
+							</div>
+							<div class="col-md-2">
+								<input type="button" id="cancelId" value="Cancel" class="btn btn-danger" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<footer th:include="fragments/footer::footer" th:remove="tag"/></footer>
+		</div>
+	</body>
+	<script>
+		$(document).ready(function () {
+			$("#myModal, #checkoutModal").hide();
+			$("#closeId").click(function() {
+				$("#myModal").hide();
+			});
+			$("#checkoutCloseId, #cancelId").click(function() {
+				$("#checkoutModal").hide();
+			});
+			$("#proceedId").click(function() {
+				history_endAdmission($("#historyId").val(), $("#checkoutAdmId").val(), $("#checkoutResultId").val());
+			});
+		});
+		function history_showAdmissionService(admissionId)
+		{
+			$("#tbodyHistoryId").html("");
+			$("#roomInfoId").html("");
+			var url = "/covid19/admission/"+admissionId+"/services";
+			$.ajax({
+				url: url,
+				type: "GET",
+				contentType: "application/json",
+				dataType: 'json',
+				cache: false,
+				timeout: 600000,
+				success: function (data) {
+					if(undefined != data["roomInfo"] && "" != data["roomInfo"])
+					{
+						$("#roomInfoId").html("<strong>"+data["roomInfo"]+"</strong>");
+					}
+					if(data["admissionServicesList"].length > 0)
+					{
+						$.each(data["admissionServicesList"], function( index, value ) {
+							var serviceDate = value.serviceDate;
+							var serviceDateArr = (serviceDate.split("T")[0]).split("-");
+							$("#tbodyHistoryId").append("<tr><td>"+serviceDateArr[2] +"/"+ serviceDateArr[1] + "/"+ serviceDateArr[0]+"</td><td>"+value.description+"</td><td>"+value.serviceResult+"</td></tr>");
+						});
+					}
+					$("#myModal").show();
+					console.log("SUCCESS : ", data);
+				},
+				error: function (e) {
+					if(null != e && null != e.responseJSON && null != e.responseJSON.message)
+					{
+						$("#alertDiv").text(e.responseJSON.message);
+						$("#alertDiv").addClass("alert-danger");
+						$("#alertDiv").show();
+						$("#alertDiv").fadeOut( 5000 );
+					}
+
+				}
+			});
+		}
+		function history_endPatientAdmission(id, admissionId)
+		{
+			$("#historyId").val(id);
+			$("#checkoutAdmId").val(admissionId);
+			$("#checkoutModal").show();
+		}
+
+		function history_endAdmission(historyId, admissionId, result)
+		{
+			var url = "/covid19/admission/"+admissionId+"/end/"+historyId+"/"+result;
+			$.ajax({
+				url: url,
+				type: "GET",
+				contentType: "application/json",
+				dataType: 'json',
+				cache: false,
+				timeout: 600000,
+				success: function (data) {
+					document.location.href="/patients/view";
+					console.log("SUCCESS : ", data);
+				},
+				error: function (e) {
+					if(null != e && null != e.responseJSON && null != e.responseJSON.message)
+					{
+						$("#alertDiv").text(e.responseJSON.message);
+						$("#alertDiv").addClass("alert-danger");
+						$("#alertDiv").show();
+						$("#alertDiv").fadeOut( 5000 );
+					}
+
+				}
+			});
+		}
+	</script>
+</html>

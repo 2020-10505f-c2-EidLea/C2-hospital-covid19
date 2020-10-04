@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<head th:include="fragments/head :: head" th:remove="tag"/>
+	</head>
+	<body>
+		<section th:include="fragments/header::header" th:remove="tag"></section>
+		<div class="container">
+			<div class="col-md-12" th:if="${noInternet != null}">
+				<div class="box">
+					<p class="alert alert-danger" th:text="${noInternet}"></p>
+				</div>
+			</div>
+			<div class="col-md-12" th:if="${noInternet == null}">
+				<div class="box">
+					<table class="table table-bordered table-striped table-hover">
+						<tr>
+							<th colspan="6" align="center">
+								<span th:text="'Novel Coronavirus (COVID-19) cases as of '+${todayDate} + ' :'"></span>
+							</th>
+						</tr>
+						<tr>
+							<th rowspan="2"><u><a href="#" th:text="'Word Wide'" onclick="showHideDetails('locationsStatsId')"></a></u></th>
+							<th>Total cases reported</th>
+							<td th:text="${totalReportedCases}"></td>
+							<th>Total Deaths</th>
+							<td th:text="${totalDeaths}"></td>
+						</tr>
+						<tr>
+							<th>New Cases reported last day</th>
+							<td th:text="${totalNewCases}"></td>
+							<th>Total Deaths Today</th>
+							<td th:text="${totalDeathsToday}"></td>
+						</tr>
+						<tr>
+							<th rowspan="2"><u><a href="#" th:text="'Arab Countries'" onclick="showHideDetails('arabicStatsId')"></a></u></th>
+							<th>Total cases reported</th>
+							<td th:text="${arabicReportedCases}"></td>
+							<th>Total Deaths</th>
+							<td th:text="${arabicDeaths}"></td>
+						</tr>
+						<tr>
+							<th>New Cases reported last day</th>
+							<td th:text="${arabicNewCases}"></td>
+							<th>Total Deaths Today</th>
+							<td th:text="${arabicDeathsToday}"></td>
+						</tr>
+						<tr>
+							<th rowspan="2">Lebanon</th>
+							<th>Total cases reported</th>
+							<td th:text="${lebanonReportedCases}"></td>
+							<th>Total Deaths</th>
+							<td th:text="${lebanonDeaths}"></td>
+						</tr>
+						<tr>
+							<th>New Cases reported last day</th>
+							<td th:text="${lebanonNewCases}"></td>
+							<th>Total Deaths Today</th>
+							<td th:text="${lebanonDeathsToday}"></td>
+						</tr>
+					</table>
+					<br/>
+				</div>
+				<div id="locationsStatsId" style="display: none">
+					<table class="table table-bordered table-striped table-hover">
+						<tr>
+							<th>Word Wide</th>
+							<th>Total cases reported</th>
+							<th>Changes since last day</th>
+							<th>Total Death(s)</th>
+							<th>Total Death(s) Today</th>
+						</tr>
+						<tr th:each="locationsStat : ${locationsStats}">
+							<td th:text="${locationsStat.country}"></td>
+							<td th:text="${locationsStat.updated}? ${locationsStat.latestCases} : 'Not Updated'">0</td>
+							<td th:if="${locationsStat.diffFromPrevDay == 0}">0</td>
+							<td th:if="${locationsStat.diffFromPrevDay > 0}"><span th:text="${locationsStat.diffFromPrevDay}"></span></td>
+							<td th:if="${locationsStat.diffFromPrevDay < 0}"><span th:text="${-locationsStat.diffFromPrevDay}"></span></td>
+							<td th:text="${locationsStat.death}"></td>
+							<td th:if="${locationsStat.deathDiffFromPrevDay == 0}">0</td>
+							<td th:if="${locationsStat.deathDiffFromPrevDay > 0}"><span th:text="${locationsStat.deathDiffFromPrevDay}"></span></td>
+							<td th:if="${locationsStat.deathDiffFromPrevDay < 0}"><span th:text="${-locationsStat.deathDiffFromPrevDay}"></span></td>
+						</tr>
+					</table>
+				</div>
+				<div id="arabicStatsId" style="display: none">
+					<table class="table table-bordered table-striped table-hover">
+						<tr>
+							<th>Arab Countries</th>
+							<th>Total cases reported</th>
+							<th>Changes since last day</th>
+							<th>Total Death(s)</th>
+							<th>Total Death(s) Today</th>
+						</tr>
+						<tr th:each="locationsStat : ${arabicStats}">
+							<td th:text="${locationsStat.country}"></td>
+							<td th:text="${locationsStat.updated}? ${locationsStat.latestCases} : 'Not Updated'">0</td>
+							<td th:if="${locationsStat.diffFromPrevDay == 0}">0</td>
+							<td th:if="${locationsStat.diffFromPrevDay > 0}"><span th:text="${locationsStat.diffFromPrevDay}"></span></td>
+							<td th:if="${locationsStat.diffFromPrevDay < 0}"><span th:text="${-locationsStat.diffFromPrevDay}"></span></td>
+							<td th:text="${locationsStat.death}"></td>
+							<td th:if="${locationsStat.deathDiffFromPrevDay == 0}">0</td>
+							<td th:if="${locationsStat.deathDiffFromPrevDay > 0}"><span th:text="${locationsStat.deathDiffFromPrevDay}"></span></td>
+							<td th:if="${locationsStat.deathDiffFromPrevDay < 0}"><span th:text="${-locationsStat.deathDiffFromPrevDay}"></span></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<footer th:include="fragments/footer::footer" th:remove="tag"/></footer>
+		</div>
+	</body>
+	<script>
+		function showHideDetails(id) {
+			$( "div#locationsStatsId, div#arabicStatsId" ).hide();
+			if ( $( "#" +id).is( ":hidden" ) ) {
+				$( "#" +id ).slideDown( 5000 );
+			} else {
+				$( "#" +id ).hide();
+			}
+		}
+	</script>
+</html>

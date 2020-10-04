@@ -1,0 +1,58 @@
+<footer class="footer" th:fragment = "footer">
+	<script type="text/javascript" src="/js/jquery-3.2.1.min.js" th:src="@{/js/jquery-3.2.1.min.js}"></script>
+	<script type="text/javascript" src="/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+	<script type="text/javascript" src="/js/popper.min.js" th:src="@{/js/popper.min.js}"></script>
+	<script type="text/javascript" src="/js/toastr.min.js"></script>
+	<script type="text/javascript" src="/js/common.js"></script>
+	<script>
+		var messages = [
+			{title: "c2-hospital-covid19 Project", message: "Created by : <br/><ul><li>Charbel Dagher</li><li>Lea Eid</li><li>Michel Ibrahim</li><li>Touma Chams</li></ul>", type:"success"},
+			{title: "How Is Coronavirus (COVID-19) Treated?", message: "Doctors and researchers are working on medicines and a vaccine for coronavirus.", type:"warning"},
+			{title: "How Is Coronavirus (COVID-19) Treated?", message: "Most people with the illness, including children, get better with rest, fluids, and fever-reducing medicine.", type:"warning"},
+			{title:"How Can I Protect Myself From Coronavirus (COVID-19)?", message: "Avoid large crowds and busy places.", type:"info"},
+			{title:"How Can I Protect Myself From Coronavirus (COVID-19)?", message: "Wash your hands well and often. Wash for at least 20 seconds with soap and water or use hand sanitizer with at least 60% alcohol.", type:"info"},
+			{title:"How Can I Protect Myself From Coronavirus (COVID-19)?", message: "Try not to touch your eyes, nose, or mouth.", type:"info"},
+			{title:"(COVID-19) Dashboard", message: "<a href='https://covid19.who.int/'>World Health Organisation</a>", type:"info"}
+		];
+		i = 0;
+		$(document).ready(function(){
+			setInterval(function(){
+				if(i==messages.length)
+				{
+					i = 0;
+				}
+				toastr.options = {
+					"closeButton": true,
+					"debug": false,
+					"newestOnTop": true,
+					"progressBar": false,
+					"positionClass": "toast-bottom-right",
+					"preventDuplicates": false,
+					"onclick": null,
+					"showDuration": "300",
+					"hideDuration": "1000",
+					"timeOut": "8000",
+					"extendedTimeOut": "1000",
+					"showEasing": "swing",
+					"hideEasing": "linear",
+					"showMethod": "fadeIn",
+					"hideMethod": "fadeOut"
+				};
+				if(messages[i].type == "warning")
+				{
+					toastr.success(messages[i].message, messages[i].title, toastr.options)
+				}else if(messages[i].type == "success")
+				{
+					toastr.success(messages[i].message, messages[i].title, toastr.options)
+				}else if(messages[i].type == "error")
+				{
+					toastr.error(messages[i].message, messages[i].title, toastr.options)
+				}else if(messages[i].type == "info")
+				{
+					toastr.info(messages[i].message, messages[i].title, toastr.options)
+				}
+				i++;
+			}, 3000);
+		});
+	</script>
+</footer>
